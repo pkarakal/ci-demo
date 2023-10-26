@@ -32,3 +32,7 @@ func InitRouter(db *gorm.DB) (e *gin.Engine, g *gin.RouterGroup) {
 	v1.Handle("GET", "/metrics", PromHandler())
 	return router, v1
 }
+
+func Routes(g *gin.RouterGroup) {
+	createUserRouter(g)
+}
