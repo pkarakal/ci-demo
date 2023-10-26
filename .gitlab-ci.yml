@@ -2,6 +2,7 @@ image: golang:1.21.3-alpine
 
 include:
   - template: Code-Quality.gitlab-ci.yml
+  - template: Jobs/SAST.gitlab-ci.yml
 
 stages:
   - build
