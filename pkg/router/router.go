@@ -35,4 +35,5 @@ func InitRouter(db *gorm.DB) (e *gin.Engine, g *gin.RouterGroup) {
 
 func Routes(g *gin.RouterGroup) {
 	createUserRouter(g)
+	createTodoRouter(g)
 }
