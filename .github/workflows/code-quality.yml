@@ -1,0 +1,31 @@
+name: Code Quality
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  code_quality:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/gitlab-org/ci-cd/codequality:latest
+      env:
+        SOURCE_CODE: ci-demo
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ${{ github.workspace }}:/code
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run code quality checks
+        run: /run.sh /code
+      - name: Archive code quality results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-quality-report
+          path: gl-code-quality-report.json
+          retention-days: 7
