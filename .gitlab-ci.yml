@@ -1,5 +1,8 @@
 image: golang:1.21.3-alpine
 
+include:
+  - template: Code-Quality.gitlab-ci.yml
+
 stages:
   - build
   - test
@@ -91,3 +94,13 @@ docker:version:
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
   only:
     - branches
+
+code_quality:
+  rules:
+    - if: $CODE_QUALITY_DISABLED
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_TAG
+  artifacts:
+    paths: [gl-code-quality-report.json]
