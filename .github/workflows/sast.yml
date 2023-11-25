@@ -1,0 +1,30 @@
+name: Static Code Analysis
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  sast:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/security-products/semgrep:4
+      env:
+        CI_PROJECT_DIR: "/code"
+      volumes:
+        - ${{ github.workspace }}:/code
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run SAST checks
+        run: /analyzer run
+      - name: Archive code quality results
+        uses: actions/upload-artifact@v3
+        with:
+          name: sast-report
+          path: gl-sast-report.json
+          retention-days: 7
