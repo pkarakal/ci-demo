@@ -1,0 +1,108 @@
+version: '3.9'
+
+services:
+  demo:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - "${PWD}/config.json:/config.json"
+    networks:
+      - demo
+
+  postgres:
+    container_name: postgres
+    restart: 'unless-stopped'
+    image: postgres:14.7
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: demo
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: "password"
+      PGDATA: /var/lib/postgresql/data/
+    volumes:
+      - postgres-storage:/var/lib/postgresql/
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}'"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 10s
+    networks:
+      - demo
+
+  postgres_exporter:
+    container_name: postgres_exporter
+    image: prometheuscommunity/postgres-exporter:v0.11.1
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATA_SOURCE_URI=postgres:5432/postgres?sslmode=disable
+      - DATA_SOURCE_USER=demo
+      - DATA_SOURCE_PASS=password
+    ports:
+      - "9187:9187"
+    networks:
+      - demo
+
+  prometheus:
+    container_name: prometheus
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: prom/prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "prometheus-storage:/prometheus"
+    networks:
+      - demo
+
+  jaeger:
+    container_name: jaeger
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: jaegertracing/all-in-one:latest
+    environment:
+      IP: 0.0.0.0
+      SPAN_STORAGE_TYPE: badger
+      BADGER_DIRECTORY_VALUE: /badger/data
+      BADGER_DIRECTORY_KEY: /badger/key
+    restart: unless-stopped
+    ports:
+      - "16686:16686"
+    volumes:
+      - "./jaeger_data:/badger"
+    networks:
+      - demo
+
+  grafana:
+    depends_on:
+      - jaeger
+      - prometheus
+    container_name: grafana
+    image: grafana/grafana-oss:9.4.3
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - demo
+
+volumes:
+  postgres-storage:
+  prometheus-storage:
+  grafana-storage:
+
+networks:
+  demo:
