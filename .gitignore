@@ -24,5 +24,9 @@ go.work
 .idea/
 .vscode/
 ci-demo
+demo
 
 config.json
+gl-*.json
+go-*.json
+sbom-manifest.json
