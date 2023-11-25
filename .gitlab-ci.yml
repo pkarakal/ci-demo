@@ -1,0 +1,33 @@
+image: golang:1.21-alpine
+
+stages:
+  - build
+  - test
+
+.update_deps: &update_deps
+  before_script:
+    - apk update && apk upgrade
+    - apk add gcc alpine-sdk
+
+build:
+  <<: *update_deps
+  stage: build
+  script:
+    - go build
+
+lint:
+  <<: *update_deps
+  stage: build
+  allow_failure: true
+  script:
+    - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+    - golangci-lint run
+
+test:
+  <<: *update_deps
+  needs:
+    - build
+  stage: test
+  script:
+    - go test ./...
+    - go test -cover ./...
