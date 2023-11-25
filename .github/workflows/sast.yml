@@ -28,3 +28,26 @@ jobs:
           name: sast-report
           path: gl-sast-report.json
           retention-days: 7
+
+  dep_scanning:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/gitlab-org/security-products/analyzers/gemnasium/main
+      env:
+        DS_MAX_DEPTH: 10
+        CI_PROJECT_DIR: "/code"
+      volumes:
+        - ${{ github.workspace }}:/code
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Gemnasium analyzer
+        run: /analyzer run
+      - name: Archive sbom results
+        uses: actions/upload-artifact@v3
+        with:
+          name: sbom-report
+          path: |
+            gl-dependency-scanning-report.json
+            gl-sbom-go-go.cdx.json
+            sbom-manifest.json
+          retention-days: 7
