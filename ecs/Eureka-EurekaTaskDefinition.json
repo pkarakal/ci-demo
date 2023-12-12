@@ -1,0 +1,172 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:eu-west-1:425455264415:task-definition/Eureka-EurekaTaskDefinition-Y4fISau9zYHx:1",
+    "containerDefinitions": [
+        {
+            "name": "EurekaContainer",
+            "image": "438752632467.dkr.ecr.eu-west-1.amazonaws.com/com_net2grid/eureka:1.2.1.RELEASE",
+            "cpu": 0,
+            "links": [],
+            "portMappings": [
+                {
+                    "containerPort": 8761,
+                    "hostPort": 8761,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "entryPoint": [],
+            "command": [],
+            "environment": [
+                {
+                    "name": "EUREKA_AUTODISCOVERY_ADDRESS",
+                    "value": "eureka.discovery"
+                },
+                {
+                    "name": "SPRING_PROFILES_ACTIVE",
+                    "value": "fargate"
+                }
+            ],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [
+                {
+                    "sourceContainer": "cfg",
+                    "readOnly": true
+                }
+            ],
+            "secrets": [],
+            "dependsOn": [
+                {
+                    "containerName": "cfg",
+                    "condition": "COMPLETE"
+                }
+            ],
+            "dnsServers": [],
+            "dnsSearchDomains": [],
+            "extraHosts": [],
+            "dockerSecurityOptions": [],
+            "dockerLabels": {},
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/eureka-service",
+                    "awslogs-region": "eu-west-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        },
+        {
+            "name": "cfg",
+            "image": "425455264415.dkr.ecr.eu-west-1.amazonaws.com/cfg:latest",
+            "cpu": 0,
+            "memory": 48,
+            "links": [],
+            "portMappings": [],
+            "essential": false,
+            "entryPoint": [],
+            "command": [],
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [],
+            "dnsServers": [],
+            "dnsSearchDomains": [],
+            "extraHosts": [],
+            "dockerSecurityOptions": [],
+            "interactive": false,
+            "pseudoTerminal": false,
+            "dockerLabels": {},
+            "ulimits": [],
+            "systemControls": []
+        }
+    ],
+    "family": "Eureka-EurekaTaskDefinition-Y4fISau9zYHx",
+    "taskRoleArn": "arn:aws:iam::425455264415:role/ecs-TaskRole-eureka-ynni-staging",
+    "executionRoleArn": "arn:aws:iam::425455264415:role/ecs-TaskExec-eureka-ynni-staging",
+    "networkMode": "awsvpc",
+    "revision": 1,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.17"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.container-ordering"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "registeredAt": "2023-11-27T13:12:23.403Z",
+    "registeredBy": "arn:aws:sts::425455264415:assumed-role/CrossAccountSignin-Net2Grid/n2g-ynni-staging",
+    "tags": [
+        {
+            "key": "access-owner",
+            "value": "NET2GRID"
+        },
+        {
+            "key": "Customer",
+            "value": "Net2Grid"
+        },
+        {
+            "key": "Resource",
+            "value": "Eureka:Task"
+        },
+        {
+            "key": "Stackname",
+            "value": "Eureka"
+        },
+        {
+            "key": "Cluster",
+            "value": "Eureka"
+        },
+        {
+            "key": "Service",
+            "value": "Eureka"
+        },
+        {
+            "key": "access-role",
+            "value": "developer"
+        },
+        {
+            "key": "Component",
+            "value": "Eureka"
+        }
+    ]
+}
