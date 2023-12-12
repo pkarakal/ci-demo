@@ -12,7 +12,7 @@ on:
 env:
   ECS_SERVICE: eureka-service
   ECS_CLUSTER: Eureka
-  ECS_TASK_DEFINITION: arn:aws:ecs:eu-west-1:425455264415:task-definition/Eureka-EurekaTaskDefinition-Y4fISau9zYHx:1
+  ECS_TASK_DEFINITION: ecs/Eureka-EurekaTaskDefinition.json
   CONTAINER_NAME: EurekaContainer 
 
 jobs:
