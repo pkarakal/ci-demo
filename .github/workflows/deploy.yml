@@ -1,0 +1,39 @@
+name: UDeploy service on ECS
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-external-id: ${{ secrets.AWS_ROLE_EXTERNAL_ID }}
+          role-duration-seconds: 1200
+          role-session-name: CDDemoSession
+
+      - name: Copy ECS task definition file
+        run: cp ecs/Eureka-EurekaTaskDefinition.json $GITHUB_WORKSPACE/task-definition.json
+
+      - name: Update ECS service
+        run: |
+          aws ecs update-service \
+            --cluster Eureka \
+            --service eureka-service \
+            --task-definition $GITHUB_WORKSPACE/task-definition.json
