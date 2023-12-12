@@ -9,6 +9,12 @@ on:
     branches:
       - master
 
+env:
+  ECS_SERVICE: eureka-service
+  ECS_CLUSTER: Eureka
+  ECS_TASK_DEFINITION: arn:aws:ecs:eu-west-1:425455264415:task-definition/Eureka-EurekaTaskDefinition-Y4fISau9zYHx:1
+  CONTAINER_NAME: EurekaContainer 
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -28,12 +34,18 @@ jobs:
           role-duration-seconds: 1200
           role-session-name: CDDemoSession
 
-      - name: Copy ECS task definition file
-        run: cp ecs/Eureka-EurekaTaskDefinition.json $GITHUB_WORKSPACE/task-definition.json
+      - name: Fill the new image ID in the Amazon ECS task definition
+        id: update-task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v3
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: 438752632467.dkr.ecr.eu-west-1.amazonaws.com/com_net2grid/eureka:1.2.1.RELEASE
 
-      - name: Update ECS service
-        run: |
-          aws ecs update-service \
-            --cluster Eureka \
-            --service eureka-service \
-            --task-definition $GITHUB_WORKSPACE/task-definition.json
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.update-task-definition.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
