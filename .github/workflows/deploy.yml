@@ -36,7 +36,7 @@ jobs:
 
       - name: Fill the new image ID in the Amazon ECS task definition
         id: update-task-definition
-        uses: aws-actions/amazon-ecs-render-task-definition@v3
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
