@@ -5,9 +5,6 @@ on:
       - master
     tags:
       - '*'
-  pull_request:
-    branches:
-      - master
 
 env:
   ECS_SERVICE: eureka-service
