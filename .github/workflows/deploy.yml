@@ -1,4 +1,4 @@
-name: UDeploy service on ECS
+name: Deploy service on ECS
 on:
   push:
     branches:
